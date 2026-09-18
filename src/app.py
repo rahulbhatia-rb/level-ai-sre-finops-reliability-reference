@@ -1,18 +1,10 @@
-"""JSONL interface for a reliability-aware capacity recommendation."""
+"""JSONL interface for hybrid GPU and Kubernetes capacity recommendations."""
 import json
 import sys
-from src.finops import Signal, assess
+from src.finops import WorkloadSignal, assess
 
 
-def evaluate(payload: dict) -> dict:
-    return {"input": payload, "recommendation": assess(Signal(**payload))}
-
-
-def main() -> None:
-    for line in sys.stdin:
-        if line.strip():
-            print(json.dumps(evaluate(json.loads(line))))
-
-
-if __name__ == "__main__":
-    main()
+for line in sys.stdin:
+    if line.strip():
+        payload = json.loads(line)
+        print(json.dumps({"workload": payload, "decision": assess(WorkloadSignal(**payload))}))
